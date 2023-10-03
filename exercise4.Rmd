@@ -25,11 +25,15 @@ library(reshape2)
 
 bat_lum <- read.csv("bat_lum_data.csv")
 
+example_lum <- read.csv("test.csv")
+
 ```
 
 ```{r binary model, echo=FALSE, include=TRUE}
 
 batmodel <- glm(cbind(detections, change) ~ lum, data= bat_lum, family= binomial)
+
+examplemodel <- glm(cbind(detections, no.show) ~ lum, data= example_lum, family= binomial)
 
 ```
 
@@ -48,6 +52,12 @@ kable(bat_lum[1:9, ], caption = 'Table 1. Bats detected using ANABAT Express aco
 ```
 
 ```{r model plot, echo=FALSE, include=TRUE}
+
+ggplot(example_lum, aes(x=detections, y=baseline_ratio)) +
+  geom_point() +
+  geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")), se=FALSE)+
+  geom_hline(yintercept = mean(example_lum$baseline_ratio), linetype = "dashed") +
+  labs(x="Individual Detections", y="Ratio from Baseline", title="Detections Expected if Species is Impacted by Luminosity")
 
 ggplot(bat_lum, aes(x=detections, y=baseline_ratio)) +
   geom_point() +
